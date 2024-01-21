@@ -1,0 +1,37 @@
+module traffic_controller(
+  input clk,
+  input cars,
+  output reg green,
+  output reg yellow,
+  output reg red
+);
+
+  reg [3:0] state;
+  reg [31:0] counter;
+
+  reg [2:0] LED_status;
+
+  always @(posedge clk) 
+  begin
+  counter <= counter + 1;
+    if (counter == 30'd250000000) //add delay 
+	 begin
+      counter <= 0;
+		
+    if (cars == 1) begin
+	 green =1;
+	 yellow =1;
+      red  = 0; // when there are cars it stays red
+    end 
+	 else //when there are no cars it waits for some time and turns green and after some time it goes back to red, time = 5 seconds
+	
+	 begin
+      
+          green  = 0;
+          yellow  = 1;
+          red  = 1;
+      
+    end
+  end
+end
+endmodule
