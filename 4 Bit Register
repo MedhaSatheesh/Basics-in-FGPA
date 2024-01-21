@@ -1,0 +1,84 @@
+module shift_register(input clk, output reg led);
+
+localparam s0 = 2'b00;
+localparam s1 = 2'b01;
+localparam s2 = 2'b10;
+localparam s3 = 2'b11;
+
+reg [1:0]statereg, statenext;
+reg [3:0] bit_value = 4'b0100;
+reg [31:0] counter;
+
+initial begin
+    statereg = s0;
+    counter = 0;
+end
+
+always @(posedge clk) begin
+    case(statereg)
+        s0: begin
+            if (counter >= 100000000) begin
+                statenext = s1;
+                counter <= 0;
+            end else begin
+                statenext = s0;
+                counter <= counter + 1;
+            end
+        end
+        s1: begin
+            if (counter >= 100000000) begin
+                statenext = s2;
+                counter <= 0;
+            end else begin
+                statenext = s1;
+                counter <= counter + 1;
+            end
+        end
+		  s2: begin
+            if (counter >= 100000000) begin
+                statenext = s3;
+                counter <= 0;
+            end else begin
+                statenext = s2;
+                counter <= counter + 1;
+            end
+        end
+		  s3: begin
+           
+                statenext = s3;
+               
+        end
+    endcase
+    statereg <= statenext;
+end
+
+always @(posedge clk) begin
+    case(statereg)
+        s0: begin
+            if (bit_value[3] == 1)
+                led <= 1;
+            else
+                led <= 0;
+        end
+        s1: begin
+            if (bit_value[2] == 1)
+                led <= 1;
+            else
+                led <= 0;
+        end
+		   s2: begin
+            if (bit_value[1] == 1)
+                led <= 1;
+            else
+                led <= 0;
+        end
+		   s3: begin
+            if (bit_value[0] == 1)
+                led <= 1;
+            else
+                led <= 0;
+        end
+    endcase
+end
+
+endmodule
