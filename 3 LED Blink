@@ -1,0 +1,60 @@
+ module leds_blink(clk,led1,led2,led3);
+input clk;
+output reg  led1;
+output reg  led2;
+output reg  led3;
+
+reg [31:0] counter;
+
+reg [2:0] LED_status;
+
+initial
+ begin
+
+         LED_status <= 3'b0;
+
+end
+
+always @ (posedge clk) 
+begin
+ 
+          counter <= counter + 1;
+          if (counter > 50000000) 
+			 begin
+            counter <= 0;
+				
+				
+      case (LED_status)
+        0: begin
+          LED_status <= 3'b1;
+        
+          led1 <= 1'b1;
+          led2 <= 1'b1;
+          led3 <= 1'b1;
+        end
+        1: begin
+          LED_status <= 3'b10;
+        
+          led1 <= 1'b0;
+          led2 <= 1'b1;
+          led3 <= 1'b1;
+        end
+        2: begin
+          LED_status <= 3'b11;
+       
+          led1 <= 1'b1;
+          led2 <= 1'b0;
+          led3 <= 1'b1;
+        end
+        3: begin
+          LED_status <= 3'b1;
+       
+          led1 <= 1'b1;
+          led2 <= 1'b1;
+          led3 <= 1'b0;
+        end
+        
+      endcase
+		end
+  end
+endmodule
