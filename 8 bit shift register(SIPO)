@@ -1,0 +1,146 @@
+module shift_register_8bit(input clk, output reg led);
+
+localparam s0 = 3'b000;
+localparam s1 = 3'b001;
+localparam s2 = 3'b010;
+localparam s3 = 3'b011;
+localparam s4 = 3'b100;
+localparam s5 = 3'b101;
+localparam s6 = 3'b110;
+localparam s7 = 3'b111;
+
+reg [2:0] statereg, statenext;
+reg [7:0] bit_value = 8'b10101010;
+reg [31:0] counter;
+
+initial begin
+    statereg = s0;
+    counter = 0;
+end
+
+always @(posedge clk) begin
+    case(statereg)
+        s0: begin
+            if (counter >= 100000000) begin
+                statenext = s1;
+                counter <= 0;
+            end else begin
+                statenext = s0;
+                counter <= counter + 1;
+            end
+        end
+        s1: begin
+            if (counter >= 100000000) begin
+                statenext = s2;
+                counter <= 0;
+            end else begin
+                statenext = s1;
+                counter <= counter + 1;
+            end
+        end
+        s2: begin
+            if (counter >= 100000000) begin
+                statenext = s3;
+                counter <= 0;
+            end else begin
+                statenext = s2;
+                counter <= counter + 1;
+            end
+        end
+        s3: begin
+            if (counter >= 100000000) begin
+                statenext = s4;
+                counter <= 0;
+            end else begin
+                statenext = s3;
+                counter <= counter + 1;
+            end
+        end
+        s4: begin
+            if (counter >= 100000000) begin
+                statenext = s5;
+                counter <= 0;
+            end else begin
+                statenext = s4;
+                counter <= counter + 1;
+            end
+        end
+        s5: begin
+            if (counter >= 100000000) begin
+                statenext = s6;
+                counter <= 0;
+            end else begin
+                statenext = s5;
+                counter <= counter + 1;
+            end
+        end
+        s6: begin
+            if (counter >= 100000000) begin
+                statenext = s7;
+                counter <= 0;
+            end else begin
+                statenext = s6;
+                counter <= counter + 1;
+            end
+        end
+        s7: begin
+            statenext = s7;
+        end
+    endcase
+    statereg <= statenext;
+end
+
+always @(posedge clk) begin
+    case(statereg)
+        s0: begin
+            if (bit_value[7] == 1)
+                led <= 1;
+            else
+                led <= 0;
+        end
+        s1: begin
+            if (bit_value[6] == 1)
+                led <= 1;
+            else
+                led <= 0;
+        end
+        s2: begin
+            if (bit_value[5] == 1)
+                led <= 1;
+            else
+                led <= 0;
+        end
+        s3: begin
+            if (bit_value[4] == 1)
+                led <= 1;
+            else
+                led <= 0;
+        end
+        s4: begin
+            if (bit_value[3] == 1)
+                led <= 1;
+            else
+                led <= 0;
+        end
+        s5: begin
+            if (bit_value[2] == 1)
+                led <= 1;
+            else
+                led <= 0;
+        end
+        s6: begin
+            if (bit_value[1] == 1)
+                led <= 1;
+            else
+                led <= 0;
+        end
+        s7: begin
+            if (bit_value[0] == 1)
+                led <= 1;
+            else
+                led <= 0;
+        end
+    endcase
+end
+
+endmodule
