@@ -1,0 +1,112 @@
+module fsm (
+    input clk,
+    input car_a,
+    input car_b,
+    output reg green_led,
+    output reg yellow_led,
+    output reg red_led,
+    output reg board_green,
+    output reg board_yellow,
+    output reg board_red
+);
+
+localparam S0 = 2'b00;
+localparam S1 = 2'b01;
+localparam S2 = 2'b10;
+localparam S3 = 2'b11;
+
+reg [1:0] state_reg, state_next;
+reg [31:0] counter;
+
+initial begin
+    state_reg = S0;
+end
+
+always @(posedge clk) begin
+    case (state_reg)
+        S0: begin
+            if (counter >= 100000000 && !car_a && car_b) begin
+                state_next = S1;
+                counter <= 0;
+            end else begin
+                state_next = S0;
+                counter <= counter + 1;
+            end
+        end
+        S1: begin
+            if (counter >= 100000000) begin
+                if (car_a || car_b) begin
+                    state_next = S2;
+                end else begin
+                    state_next = S1;
+                end
+                counter <= 0;
+            end else begin
+                state_next = S1;
+                counter <= counter + 1;
+            end
+        end
+        S2: begin
+            if (counter >= 100000000) begin
+                if (car_a || car_b) begin
+                    state_next = S3;
+                end else begin
+                    state_next = S2;
+                end
+                counter <= 0;
+            end else begin
+                state_next = S2;
+                counter <= counter + 1;
+            end
+        end
+        S3: begin
+            if (counter >= 100000000 && !car_a && car_b) begin
+                state_next = S1;
+                counter <= 0;
+            end else begin
+                state_next = S0;
+                counter <= counter + 1;
+            end
+        end
+    endcase
+    state_reg <= state_next;
+end
+
+always @(posedge clk) begin
+    case (state_reg)
+        S0: begin
+            green_led <= 1; //on
+            yellow_led <= 0; //off
+            red_led <= 0; //off
+            board_red <= 0; //on
+            board_yellow <= 1; //off
+            board_green <= 1; //off
+        end
+        S1: begin
+            green_led <= 0;
+            yellow_led <= 1;
+            red_led <= 0;
+            board_red <= 1; //on
+            board_yellow <= 0; //off
+            board_green <= 1; //off
+        end
+        S2: begin
+            green_led <= 0;
+            yellow_led <= 0;
+            red_led <= 1;
+            board_red <= 1; //off
+            board_yellow <= 1; //off
+            board_green <= 0; //on
+        end
+        S3: begin
+            green_led <= 0;
+            yellow_led <= 1;
+            red_led <= 1;
+            board_red <= 1; //off
+            board_yellow <= 1; //on
+            board_green <= 1; //off
+        end
+    endcase
+end
+
+endmodule
